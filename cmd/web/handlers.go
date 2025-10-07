@@ -22,15 +22,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// Use the template.ParseFiles() functon to read the files and store the template in a template set. Notice that we use ... to pass the contents of the files slice as varidiac arguments
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, r, err)
 		return
 	}
 	// Then we use the ExecuteTemplate() method to write the content of the "base" template as the response body.
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, r, err)
 	}
 }
 
