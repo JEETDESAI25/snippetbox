@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/justinas/alice"
+)
 
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
@@ -13,7 +17,9 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
 	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
+	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
+
 	// Because commonHeader is just a function and the function returns a http.Handler we dont need to do anything else.
 
-	return app.logRequest(commonHeader(mux))
+	return standard.Then(mux)
 }
