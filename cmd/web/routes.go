@@ -2,8 +2,7 @@ package main
 
 import "net/http"
 
-// The routes() method returns a servermux contanining our application routes.
-func (app *application) routes() *http.ServeMux {
+func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -13,5 +12,8 @@ func (app *application) routes() *http.ServeMux {
 	mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
 	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
 	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
-	return mux
+
+	// Because commonHeader is just a function and the function returns a http.Handler we dont need to do anything else.
+
+	return app.logRequest(commonHeader(mux))
 }
