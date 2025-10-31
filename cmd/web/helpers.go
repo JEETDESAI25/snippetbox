@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/go-playground/form/v4"
 )
 
 // The ServerError helper writes a log entry at Error level
@@ -17,7 +20,6 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 	app.logger.Error(err.Error(), "method", method, "uri", uri)
 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-
 }
 
 // The clientError helper sends a specific status code.
@@ -26,7 +28,6 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, page string, data templateData) {
-
 	ts, ok := app.templateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exits", page)
@@ -50,4 +51,22 @@ func (app *application) newTemplateData(r *http.Request) templateData {
 	return templateData{
 		CurrentYear: time.Now().Year(),
 	}
+}
+
+func (app *application) decodePostForm(r *http.Request, dst any) error {
+	err := r.ParseForm()
+	if err != nil {
+		return err
+	}
+
+	err = app.formDecoder.Decode(dst, r.PostForm)
+	if err != nil {
+		var invalidDecodeError *form.InvalidDecodeError
+
+		if errors.As(err, &invalidDecoderError) {
+			panic(err)
+		}
+		return err
+	}
+	return nil
 }
