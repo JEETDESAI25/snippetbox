@@ -2,6 +2,8 @@
 
 A web application for creating and sharing code snippets with user authentication and session management.
 
+![Snippetbox Homepage](docs/images/home.jpeg)
+
 ## Prerequisites
 
 - Go 1.20+
