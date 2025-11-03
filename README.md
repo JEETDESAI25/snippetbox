@@ -1,6 +1,6 @@
 # Snippetbox
 
-A web application for creating and sharing code snippets with user authentication and session management.
+A web application for creating and sharing text snippets.
 
 ![Snippetbox Homepage](docs/images/Home.jpeg)
 
